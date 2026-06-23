@@ -1,3 +1,3 @@
 window.SILENCE_CONFIG = {
-  apiBase: "",
+  apiBase: "https://xplato-silence-control.platopedia.workers.dev",
 };
