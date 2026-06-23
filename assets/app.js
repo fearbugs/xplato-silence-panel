@@ -6,6 +6,7 @@
   const state = {
     targets: [],
     receiptToken: new URLSearchParams(location.hash.slice(1)).get("receipt") || "",
+    adminToken: sessionStorage.getItem("silence-admin-token") || "",
     adminOpenClicks: 0,
     adminClickTimer: null,
   };
@@ -21,13 +22,17 @@
   ].map((id) => [id, document.getElementById(id)]));
 
   function request(path, options = {}) {
+    const headers = {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    };
+    if (state.adminToken && path.startsWith("/api/admin/")) {
+      headers.Authorization = `Bearer ${state.adminToken}`;
+    }
     return fetch(`${apiBase}${path}`, {
       credentials: "include",
       ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
+      headers,
     }).then(async (response) => {
       const data = await response.json().catch(() => ({ error: "invalid_response" }));
       if (!response.ok || !data.ok) {
@@ -234,10 +239,12 @@
     event.preventDefault();
     elements.adminLoginError.textContent = "";
     try {
-      await request("/api/admin/login", {
+      const data = await request("/api/admin/login", {
         method: "POST",
         body: JSON.stringify({ password: elements.masterPassword.value }),
       });
+      state.adminToken = data.sessionToken || "";
+      if (state.adminToken) sessionStorage.setItem("silence-admin-token", state.adminToken);
       elements.masterPassword.value = "";
       elements.adminLogin.classList.add("hidden");
       elements.adminDashboard.classList.remove("hidden");
@@ -258,7 +265,10 @@
       renderAdminRows(listing.silences);
       renderRunner(overview.runner, overview.serverTime);
     } catch (error) {
-      if (error.code === "unauthorized") showAdminLogin();
+      if (error.code === "unauthorized") {
+        showAdminLogin();
+        elements.adminLoginError.textContent = "Admin session was not accepted. Please log in again.";
+      }
       else elements.runnerState.textContent = error.message;
     }
   }
@@ -387,6 +397,8 @@
 
   async function logoutAdmin() {
     await request("/api/admin/logout", { method: "POST", body: "{}" }).catch(() => {});
+    state.adminToken = "";
+    sessionStorage.removeItem("silence-admin-token");
     showAdminLogin();
   }
 
