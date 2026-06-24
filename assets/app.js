@@ -293,7 +293,8 @@
     elements.receiptBand.classList.add("hidden");
     elements.adminPage.classList.remove("hidden");
     elements.masterPassword.focus();
-    loadAdmin();
+    if (state.adminToken) loadAdmin({ quietUnauthorized: true });
+    else showAdminLogin();
   }
 
   function closeAdminPage() {
@@ -321,7 +322,7 @@
     }
   }
 
-  async function loadAdmin() {
+  async function loadAdmin(options = {}) {
     try {
       const status = elements.adminStatusFilter.value;
       const [overview, listing] = await Promise.all([
@@ -335,8 +336,10 @@
       renderRunner(overview.runner, overview.serverTime);
     } catch (error) {
       if (error.code === "unauthorized") {
+        state.adminToken = "";
+        removeSession("silence-admin-token");
         showAdminLogin();
-        elements.adminLoginError.textContent = "Admin session was not accepted. Please log in again.";
+        if (!options.quietUnauthorized) elements.adminLoginError.textContent = "Admin session expired. Please log in again.";
       }
       else elements.runnerState.textContent = error.message;
     }
@@ -530,7 +533,7 @@
       state.adminHoldTimer = null;
       triggerHaptic();
       openAdmin();
-    }, 3000);
+    }, 1000);
   }
 
   function cancelAdminHold(event) {
