@@ -519,16 +519,22 @@
 
   function startAdminHold(event) {
     if (event.button !== undefined && event.button !== 0) return;
+    if (event.cancelable) event.preventDefault();
+    if (state.adminHoldTimer) return;
+    document.body.classList.add("suppress-selection");
     clearTimeout(state.adminHoldTimer);
     state.adminHoldTimer = setTimeout(() => {
       state.adminHoldTimer = null;
+      document.body.classList.remove("suppress-selection");
       openAdmin();
     }, 3000);
   }
 
-  function cancelAdminHold() {
+  function cancelAdminHold(event) {
+    if (event?.cancelable) event.preventDefault();
     clearTimeout(state.adminHoldTimer);
     state.adminHoldTimer = null;
+    document.body.classList.remove("suppress-selection");
   }
 
   elements.addTargets.addEventListener("click", parseUidInput);
@@ -566,6 +572,13 @@
   elements.brandTrigger.addEventListener("pointerup", cancelAdminHold);
   elements.brandTrigger.addEventListener("pointerleave", cancelAdminHold);
   elements.brandTrigger.addEventListener("pointercancel", cancelAdminHold);
+  elements.brandTrigger.addEventListener("touchstart", startAdminHold, { passive: false });
+  elements.brandTrigger.addEventListener("touchend", cancelAdminHold, { passive: false });
+  elements.brandTrigger.addEventListener("touchcancel", cancelAdminHold, { passive: false });
+  elements.brandTrigger.addEventListener("mousedown", startAdminHold);
+  elements.brandTrigger.addEventListener("mouseup", cancelAdminHold);
+  elements.brandTrigger.addEventListener("mouseleave", cancelAdminHold);
+  elements.brandTrigger.addEventListener("click", (event) => event.preventDefault());
   elements.brandTrigger.addEventListener("contextmenu", (event) => event.preventDefault());
   elements.closeAdmin.addEventListener("click", closeAdminPage);
   elements.adminLogin.addEventListener("submit", adminLogin);
