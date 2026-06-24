@@ -6,8 +6,8 @@
   const state = {
     targets: [],
     receiptToken: new URLSearchParams(location.hash.slice(1)).get("receipt") || "",
-    adminToken: sessionStorage.getItem("silence-admin-token") || "",
-    theme: localStorage.getItem("silence-theme") || "light",
+    adminToken: readSession("silence-admin-token") || "",
+    theme: readLocal("silence-theme") || document.documentElement.dataset.theme || "light",
     adminHoldTimer: null,
   };
 
@@ -48,10 +48,50 @@
     return String(value || "Request failed").replace(/_/g, " ");
   }
 
+  function readLocal(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return "";
+    }
+  }
+
+  function writeLocal(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      // Theme still applies for this page even if persistence is unavailable.
+    }
+  }
+
+  function readSession(key) {
+    try {
+      return sessionStorage.getItem(key);
+    } catch {
+      return "";
+    }
+  }
+
+  function writeSession(key, value) {
+    try {
+      sessionStorage.setItem(key, value);
+    } catch {
+      // Admin still works for this page load through in-memory state.
+    }
+  }
+
+  function removeSession(key) {
+    try {
+      sessionStorage.removeItem(key);
+    } catch {
+      // Ignore storage cleanup failures.
+    }
+  }
+
   function applyTheme(theme) {
     state.theme = theme === "dark" ? "dark" : "light";
     document.documentElement.dataset.theme = state.theme;
-    localStorage.setItem("silence-theme", state.theme);
+    writeLocal("silence-theme", state.theme);
     const dark = state.theme === "dark";
     elements.themeToggle.setAttribute("aria-pressed", String(dark));
     elements.themeToggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
@@ -266,7 +306,7 @@
         body: JSON.stringify({ password: elements.masterPassword.value }),
       });
       state.adminToken = data.sessionToken || "";
-      if (state.adminToken) sessionStorage.setItem("silence-admin-token", state.adminToken);
+      if (state.adminToken) writeSession("silence-admin-token", state.adminToken);
       elements.masterPassword.value = "";
       elements.adminLogin.classList.add("hidden");
       elements.adminDashboard.classList.remove("hidden");
@@ -423,7 +463,7 @@
   async function logoutAdmin() {
     await request("/api/admin/logout", { method: "POST", body: "{}" }).catch(() => {});
     state.adminToken = "";
-    sessionStorage.removeItem("silence-admin-token");
+    removeSession("silence-admin-token");
     showAdminLogin();
   }
 
@@ -483,7 +523,7 @@
     state.adminHoldTimer = setTimeout(() => {
       state.adminHoldTimer = null;
       openAdmin();
-    }, 5000);
+    }, 3000);
   }
 
   function cancelAdminHold() {

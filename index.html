@@ -5,15 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>xPlato Silence Control</title>
+  <script>
+    (() => {
+      try {
+        if (localStorage.getItem("silence-theme") === "dark") {
+          document.documentElement.dataset.theme = "dark";
+        }
+      } catch {}
+    })();
+  </script>
   <link rel="icon" href="assets/xplato-mark.png">
   <link rel="stylesheet" href="assets/styles.css">
   <script src="assets/config.js"></script>
-  <script src="assets/app.js?v=theme-1" defer></script>
+  <script src="assets/app.js?v=theme-2" defer></script>
 </head>
 <body>
   <header class="app-header">
     <button class="brand" id="brandTrigger" type="button" aria-label="Silence Control">
-      <img src="assets/xplato-mark.png" alt="">
+      <img src="assets/xplato-mark.png" alt="" draggable="false">
       <span>
         <strong>xPlato</strong>
         <small>Silence Control</small>
@@ -21,7 +30,9 @@
     </button>
     <div class="header-actions">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
-        <span class="theme-icon" aria-hidden="true"></span>
+        <span class="theme-track" aria-hidden="true">
+          <span class="theme-thumb"></span>
+        </span>
       </button>
       <div class="service-state" id="serviceState">
         <span class="state-dot"></span>

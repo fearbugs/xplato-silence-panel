@@ -78,7 +78,18 @@ button { letter-spacing: 0; }
   text-align: left;
   touch-action: manipulation;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
+
+.brand * {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.brand:active { background: transparent; }
+.brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
 .brand img { width: 40px; height: 40px; border-radius: 6px; }
 .brand span { display: grid; }
@@ -86,7 +97,7 @@ button { letter-spacing: 0; }
 .brand small { color: var(--muted); font-size: 12px; }
 
 .theme-toggle {
-  width: 32px;
+  width: 44px;
   height: 32px;
   border: 1px solid var(--line);
   border-radius: 4px;
@@ -95,22 +106,40 @@ button { letter-spacing: 0; }
   display: inline-grid;
   place-items: center;
   cursor: pointer;
+  padding: 0;
 }
 
 .theme-toggle:hover { border-color: var(--line-strong); }
 
-.theme-icon {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  background: currentColor;
-  box-shadow: 5px -4px 0 -2px var(--surface-soft);
+.theme-track {
+  width: 28px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  position: relative;
+  transition: background 160ms ease, border-color 160ms ease;
 }
 
-:root[data-theme="dark"] .theme-icon {
-  background: transparent;
-  box-shadow: 5px -4px 0 -1px var(--surface-soft);
+.theme-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.theme-toggle[aria-pressed="true"] .theme-track {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.theme-toggle[aria-pressed="true"] .theme-thumb {
+  transform: translateX(12px);
+  background: var(--accent);
 }
 
 .service-state {
