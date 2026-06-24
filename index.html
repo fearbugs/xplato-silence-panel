@@ -15,19 +15,20 @@
     })();
   </script>
   <link rel="icon" href="assets/xplato-mark.png">
-  <link rel="stylesheet" href="assets/styles.css?v=hold-1">
+  <link rel="stylesheet" href="assets/styles.css?v=admin-trigger-1">
   <script src="assets/config.js"></script>
-  <script src="assets/app.js?v=hold-1" defer></script>
+  <script src="assets/app.js?v=admin-trigger-1" defer></script>
 </head>
 <body>
   <header class="app-header">
-    <button class="brand" id="brandTrigger" type="button" aria-label="Silence Control">
+    <div class="brand" aria-label="Silence Control">
       <img src="assets/xplato-mark.png" alt="" draggable="false">
       <span>
         <strong>xPlato</strong>
         <small>Silence Control</small>
       </span>
-    </button>
+      <button class="admin-trigger" id="adminTrigger" type="button" aria-label="Open administration"></button>
+    </div>
     <div class="header-actions">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
         <span class="theme-track" aria-hidden="true">

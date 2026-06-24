@@ -15,7 +15,7 @@
     "serviceState", "themeToggle", "workspace", "batchForm", "uidInput", "defaultHours", "durationPresets", "startMode",
     "startAtField", "startAt", "addTargets", "otp", "note", "submitBatch", "clearBatch",
     "targetRows", "targetCount", "activity", "receiptBand", "receiptSummary", "receiptRows",
-    "refreshReceipt", "brandTrigger", "adminPage", "closeAdmin", "adminLogin", "masterPassword",
+    "refreshReceipt", "adminTrigger", "adminPage", "closeAdmin", "adminLogin", "masterPassword",
     "adminLoginError", "adminDashboard", "adminMetrics", "adminRows", "adminStatusFilter",
     "refreshAdmin", "adminLogout", "runnerState", "extendDialog", "extendForm", "extendHours",
     "extendSilenceId", "closeExtend",
@@ -521,11 +521,8 @@
     if (event.button !== undefined && event.button !== 0) return;
     if (event.cancelable) event.preventDefault();
     if (state.adminHoldTimer) return;
-    document.body.classList.add("suppress-selection");
-    clearTimeout(state.adminHoldTimer);
     state.adminHoldTimer = setTimeout(() => {
       state.adminHoldTimer = null;
-      document.body.classList.remove("suppress-selection");
       openAdmin();
     }, 3000);
   }
@@ -534,7 +531,6 @@
     if (event?.cancelable) event.preventDefault();
     clearTimeout(state.adminHoldTimer);
     state.adminHoldTimer = null;
-    document.body.classList.remove("suppress-selection");
   }
 
   elements.addTargets.addEventListener("click", parseUidInput);
@@ -568,18 +564,14 @@
   elements.refreshReceipt.addEventListener("click", loadReceipt);
   elements.themeToggle.addEventListener("click", toggleTheme);
 
-  elements.brandTrigger.addEventListener("pointerdown", startAdminHold);
-  elements.brandTrigger.addEventListener("pointerup", cancelAdminHold);
-  elements.brandTrigger.addEventListener("pointerleave", cancelAdminHold);
-  elements.brandTrigger.addEventListener("pointercancel", cancelAdminHold);
-  elements.brandTrigger.addEventListener("touchstart", startAdminHold, { passive: false });
-  elements.brandTrigger.addEventListener("touchend", cancelAdminHold, { passive: false });
-  elements.brandTrigger.addEventListener("touchcancel", cancelAdminHold, { passive: false });
-  elements.brandTrigger.addEventListener("mousedown", startAdminHold);
-  elements.brandTrigger.addEventListener("mouseup", cancelAdminHold);
-  elements.brandTrigger.addEventListener("mouseleave", cancelAdminHold);
-  elements.brandTrigger.addEventListener("click", (event) => event.preventDefault());
-  elements.brandTrigger.addEventListener("contextmenu", (event) => event.preventDefault());
+  elements.adminTrigger.addEventListener("touchstart", startAdminHold, { passive: false });
+  elements.adminTrigger.addEventListener("touchend", cancelAdminHold, { passive: false });
+  elements.adminTrigger.addEventListener("touchcancel", cancelAdminHold, { passive: false });
+  elements.adminTrigger.addEventListener("mousedown", startAdminHold);
+  elements.adminTrigger.addEventListener("mouseup", cancelAdminHold);
+  elements.adminTrigger.addEventListener("mouseleave", cancelAdminHold);
+  elements.adminTrigger.addEventListener("click", (event) => event.preventDefault());
+  elements.adminTrigger.addEventListener("contextmenu", (event) => event.preventDefault());
   elements.closeAdmin.addEventListener("click", closeAdminPage);
   elements.adminLogin.addEventListener("submit", adminLogin);
   elements.refreshAdmin.addEventListener("click", loadAdmin);
