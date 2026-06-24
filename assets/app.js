@@ -7,11 +7,12 @@
     targets: [],
     receiptToken: new URLSearchParams(location.hash.slice(1)).get("receipt") || "",
     adminToken: sessionStorage.getItem("silence-admin-token") || "",
+    theme: localStorage.getItem("silence-theme") || "light",
     adminHoldTimer: null,
   };
 
   const elements = Object.fromEntries([
-    "serviceState", "workspace", "batchForm", "uidInput", "defaultHours", "durationPresets", "startMode",
+    "serviceState", "themeToggle", "workspace", "batchForm", "uidInput", "defaultHours", "durationPresets", "startMode",
     "startAtField", "startAt", "addTargets", "otp", "note", "submitBatch", "clearBatch",
     "targetRows", "targetCount", "activity", "receiptBand", "receiptSummary", "receiptRows",
     "refreshReceipt", "brandTrigger", "adminPage", "closeAdmin", "adminLogin", "masterPassword",
@@ -45,6 +46,19 @@
 
   function readableError(value) {
     return String(value || "Request failed").replace(/_/g, " ");
+  }
+
+  function applyTheme(theme) {
+    state.theme = theme === "dark" ? "dark" : "light";
+    document.documentElement.dataset.theme = state.theme;
+    localStorage.setItem("silence-theme", state.theme);
+    const dark = state.theme === "dark";
+    elements.themeToggle.setAttribute("aria-pressed", String(dark));
+    elements.themeToggle.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+  }
+
+  function toggleTheme() {
+    applyTheme(state.theme === "dark" ? "light" : "dark");
   }
 
   function parseUidInput() {
@@ -506,6 +520,7 @@
     setActivity("Ready", "Add UIDs to prepare a batch.");
   });
   elements.refreshReceipt.addEventListener("click", loadReceipt);
+  elements.themeToggle.addEventListener("click", toggleTheme);
 
   elements.brandTrigger.addEventListener("pointerdown", startAdminHold);
   elements.brandTrigger.addEventListener("pointerup", cancelAdminHold);
@@ -521,6 +536,7 @@
   elements.closeExtend.addEventListener("click", () => elements.extendDialog.close());
 
   renderTargets();
+  applyTheme(state.theme);
   checkHealth();
   if (state.receiptToken) loadReceipt();
 })();

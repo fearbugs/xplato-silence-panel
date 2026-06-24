@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
   <title>xPlato Silence Control</title>
   <link rel="icon" href="assets/xplato-mark.png">
   <link rel="stylesheet" href="assets/styles.css">
   <script src="assets/config.js"></script>
-  <script src="assets/app.js?v=admin-page-1" defer></script>
+  <script src="assets/app.js?v=theme-1" defer></script>
 </head>
 <body>
   <header class="app-header">
@@ -19,9 +19,14 @@
         <small>Silence Control</small>
       </span>
     </button>
-    <div class="service-state" id="serviceState">
-      <span class="state-dot"></span>
-      <span>Checking service</span>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="theme-icon" aria-hidden="true"></span>
+      </button>
+      <div class="service-state" id="serviceState">
+        <span class="state-dot"></span>
+        <span>Checking service</span>
+      </div>
     </div>
   </header>
 
@@ -38,7 +43,7 @@
       <form id="batchForm">
         <label class="field">
           <span>UIDs</span>
-          <textarea id="uidInput" rows="5" spellcheck="false" placeholder="3mf7t8ey7ithz-1a6m22j8be4ig"></textarea>
+          <textarea id="uidInput" rows="5" spellcheck="false"></textarea>
         </label>
 
         <div class="field">
@@ -77,12 +82,12 @@
 
         <label class="field otp-field">
           <span>One-time password</span>
-          <input id="otp" type="text" maxlength="14" autocomplete="one-time-code" spellcheck="false" placeholder="B7KM9D4QXP">
+          <input id="otp" type="text" maxlength="14" autocomplete="one-time-code" spellcheck="false">
         </label>
 
         <label class="field">
           <span>Your Plato ID</span>
-          <input id="note" type="text" maxlength="100" autocomplete="username" spellcheck="false" placeholder="28zjyxivp1u9g-2myvom7neio1q" required>
+          <input id="note" type="text" maxlength="100" autocomplete="username" spellcheck="false" required>
         </label>
 
         <button class="primary-button" id="submitBatch" type="submit">Schedule batch</button>
