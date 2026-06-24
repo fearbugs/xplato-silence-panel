@@ -3,12 +3,16 @@
 
   const config = window.SILENCE_CONFIG || {};
   const apiBase = String(config.apiBase || "").replace(/\/$/, "");
+  const ADMIN_HOLD_MS = 1000;
+  const ADMIN_HAPTIC_PULSE_MS = 8;
+  const ADMIN_HAPTIC_INTERVAL_MS = 90;
   const state = {
     targets: [],
     receiptToken: new URLSearchParams(location.hash.slice(1)).get("receipt") || "",
     adminToken: readSession("silence-admin-token") || "",
     theme: readLocal("silence-theme") || document.documentElement.dataset.theme || "light",
     adminHoldTimer: null,
+    adminHoldHapticTimer: null,
   };
 
   const elements = Object.fromEntries([
@@ -524,16 +528,35 @@
     if (event.button !== undefined && event.button !== 0) return;
     if (event.cancelable) event.preventDefault();
     if (state.adminHoldTimer) return;
+    startAdminHoldHaptic();
     state.adminHoldTimer = setTimeout(() => {
       state.adminHoldTimer = null;
+      stopAdminHoldHaptic();
       openAdmin();
-    }, 1000);
+    }, ADMIN_HOLD_MS);
   }
 
   function cancelAdminHold(event) {
     if (event?.cancelable) event.preventDefault();
     clearTimeout(state.adminHoldTimer);
     state.adminHoldTimer = null;
+    stopAdminHoldHaptic();
+  }
+
+  function startAdminHoldHaptic() {
+    if (!("vibrate" in navigator) || state.adminHoldHapticTimer) return;
+    navigator.vibrate(ADMIN_HAPTIC_PULSE_MS);
+    state.adminHoldHapticTimer = setInterval(() => {
+      navigator.vibrate(ADMIN_HAPTIC_PULSE_MS);
+    }, ADMIN_HAPTIC_INTERVAL_MS);
+  }
+
+  function stopAdminHoldHaptic() {
+    if (state.adminHoldHapticTimer) {
+      clearInterval(state.adminHoldHapticTimer);
+      state.adminHoldHapticTimer = null;
+    }
+    if ("vibrate" in navigator) navigator.vibrate(0);
   }
 
   elements.addTargets.addEventListener("click", parseUidInput);
