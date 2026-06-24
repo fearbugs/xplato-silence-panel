@@ -101,6 +101,11 @@
     applyTheme(state.theme === "dark" ? "light" : "dark");
   }
 
+  function triggerHaptic() {
+    if (!("vibrate" in navigator)) return;
+    navigator.vibrate([12, 18, 12]);
+  }
+
   function parseUidInput() {
     const values = elements.uidInput.value.split(/[\s,;]+/).map((value) => value.trim().toLowerCase()).filter(Boolean);
     const existing = new Set(state.targets.map((target) => target.uid));
@@ -523,6 +528,7 @@
     if (state.adminHoldTimer) return;
     state.adminHoldTimer = setTimeout(() => {
       state.adminHoldTimer = null;
+      triggerHaptic();
       openAdmin();
     }, 3000);
   }

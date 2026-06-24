@@ -108,7 +108,7 @@ button { letter-spacing: 0; }
 .admin-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
 .theme-toggle {
-  width: 44px;
+  width: 38px;
   height: 32px;
   border: 1px solid var(--line);
   border-radius: 4px;
@@ -122,40 +122,25 @@ button { letter-spacing: 0; }
 
 .theme-toggle:hover { border-color: var(--line-strong); }
 
-.theme-track {
-  width: 28px;
-  height: 16px;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
-  position: relative;
-  transition: background 160ms ease, border-color 160ms ease;
+.theme-toggle::before {
+  content: "☀";
+  font-size: 16px;
+  line-height: 1;
 }
 
-.theme-thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--muted);
-  transition: transform 160ms ease, background 160ms ease;
-}
-
-.theme-toggle[aria-pressed="true"] .theme-track {
-  background: var(--accent-soft);
+.theme-toggle[aria-pressed="true"] {
+  color: var(--accent);
   border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
-.theme-toggle[aria-pressed="true"] .theme-thumb {
-  transform: translateX(12px);
-  background: var(--accent);
+.theme-toggle[aria-pressed="true"]::before {
+  content: "☾";
 }
 
 .service-state {
-  min-height: 30px;
-  padding: 5px 9px;
+  height: 32px;
+  padding: 0 9px;
   border: 1px solid var(--line);
   border-radius: 4px;
   color: var(--muted);
