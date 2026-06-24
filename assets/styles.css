@@ -49,8 +49,10 @@ button { letter-spacing: 0; }
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  cursor: default;
+  cursor: pointer;
   text-align: left;
+  touch-action: manipulation;
+  user-select: none;
 }
 
 .brand img { width: 40px; height: 40px; border-radius: 6px; }
@@ -226,9 +228,29 @@ th { height: 38px; color: var(--muted); background: var(--surface-soft); font-si
 .status-tag.failed, .status-tag.cancelled { color: var(--danger); border-color: #dfb1b1; background: var(--danger-soft); }
 .status-tag.scheduled, .status-tag.queued { color: var(--amber); border-color: #dec27e; background: var(--amber-soft); }
 
+.admin-page {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 24px;
+}
+.admin-page > .dialog-head,
+.admin-page > .admin-login,
+.admin-page > .admin-dashboard {
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  background: var(--surface);
+}
+.admin-page > .dialog-head {
+  border-top: 1px solid var(--line);
+  border-radius: 6px 6px 0 0;
+}
+.admin-page > .admin-login,
+.admin-page > .admin-dashboard {
+  border-bottom: 1px solid var(--line);
+  border-radius: 0 0 6px 6px;
+}
 dialog { border: 1px solid var(--line-strong); border-radius: 6px; padding: 0; color: var(--ink); box-shadow: 0 20px 60px rgba(22, 28, 24, 0.22); }
 dialog::backdrop { background: rgba(20, 24, 22, 0.56); }
-.admin-dialog { width: min(1050px, calc(100vw - 30px)); max-height: calc(100vh - 30px); }
 .small-dialog { width: min(430px, calc(100vw - 30px)); }
 .dialog-head { min-height: 68px; padding: 13px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .admin-login, .small-dialog form { padding: 18px; display: grid; gap: 14px; }
@@ -242,7 +264,8 @@ dialog::backdrop { background: rgba(20, 24, 22, 0.56); }
 .admin-toolbar { margin: 12px 0; display: flex; gap: 8px; align-items: center; }
 .admin-toolbar select { width: 180px; min-height: 32px; padding: 5px 8px; }
 .admin-table-wrap { max-height: 430px; border: 1px solid var(--line); }
-.admin-table-wrap table { min-width: 790px; }
+.admin-table-wrap table { min-width: 930px; }
+.moderator-cell { min-width: 150px; }
 .table-actions { display: flex; gap: 5px; }
 .table-actions button { min-height: 28px; border-radius: 4px; padding: 4px 7px; border: 1px solid var(--line-strong); background: var(--surface); cursor: pointer; font-size: 11px; font-weight: 700; }
 .table-actions .danger { color: var(--danger); border-color: #d6aaaa; }

@@ -8,7 +8,7 @@
   <link rel="icon" href="assets/xplato-mark.png">
   <link rel="stylesheet" href="assets/styles.css">
   <script src="assets/config.js"></script>
-  <script src="assets/app.js?v=admin-session-2" defer></script>
+  <script src="assets/app.js?v=admin-page-1" defer></script>
 </head>
 <body>
   <header class="app-header">
@@ -25,7 +25,7 @@
     </div>
   </header>
 
-  <main class="workspace">
+  <main class="workspace" id="workspace">
     <section class="composer" aria-labelledby="batchHeading">
       <div class="section-title">
         <div>
@@ -81,8 +81,8 @@
         </label>
 
         <label class="field">
-          <span>Note</span>
-          <input id="note" type="text" maxlength="300" placeholder="Moderation reference">
+          <span>Your Plato ID</span>
+          <input id="note" type="text" maxlength="100" autocomplete="username" spellcheck="false" placeholder="28zjyxivp1u9g-2myvom7neio1q" required>
         </label>
 
         <button class="primary-button" id="submitBatch" type="submit">Schedule batch</button>
@@ -139,13 +139,13 @@
     </div>
   </section>
 
-  <dialog id="adminDialog" class="admin-dialog">
+  <section id="adminPage" class="admin-page hidden" aria-labelledby="adminHeading">
     <div class="dialog-head">
       <div>
         <span class="eyebrow">Restricted</span>
-        <h2>Administration</h2>
+        <h2 id="adminHeading">Administration</h2>
       </div>
-      <button class="icon-button" id="closeAdmin" type="button" aria-label="Close administration">×</button>
+      <button class="icon-button" id="closeAdmin" type="button" aria-label="Back to panel">×</button>
     </div>
 
     <form id="adminLogin" class="admin-login">
@@ -175,13 +175,13 @@
       </div>
       <div class="table-wrap admin-table-wrap">
         <table>
-          <thead><tr><th>UID</th><th>Status</th><th>Expiry</th><th>Next refresh</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Moderator</th><th>UID</th><th>Status</th><th>Expiry</th><th>Next refresh</th><th>Actions</th></tr></thead>
           <tbody id="adminRows"></tbody>
         </table>
       </div>
       <div class="activity compact-activity" id="runnerState"></div>
     </div>
-  </dialog>
+  </section>
 
   <dialog id="extendDialog" class="small-dialog">
     <form id="extendForm">

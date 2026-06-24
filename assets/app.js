@@ -7,15 +7,14 @@
     targets: [],
     receiptToken: new URLSearchParams(location.hash.slice(1)).get("receipt") || "",
     adminToken: sessionStorage.getItem("silence-admin-token") || "",
-    adminOpenClicks: 0,
-    adminClickTimer: null,
+    adminHoldTimer: null,
   };
 
   const elements = Object.fromEntries([
-    "serviceState", "batchForm", "uidInput", "defaultHours", "durationPresets", "startMode",
+    "serviceState", "workspace", "batchForm", "uidInput", "defaultHours", "durationPresets", "startMode",
     "startAtField", "startAt", "addTargets", "otp", "note", "submitBatch", "clearBatch",
     "targetRows", "targetCount", "activity", "receiptBand", "receiptSummary", "receiptRows",
-    "refreshReceipt", "brandTrigger", "adminDialog", "closeAdmin", "adminLogin", "masterPassword",
+    "refreshReceipt", "brandTrigger", "adminPage", "closeAdmin", "adminLogin", "masterPassword",
     "adminLoginError", "adminDashboard", "adminMetrics", "adminRows", "adminStatusFilter",
     "refreshAdmin", "adminLogout", "runnerState", "extendDialog", "extendForm", "extendHours",
     "extendSilenceId", "closeExtend",
@@ -156,7 +155,7 @@
     const body = {
       otp: elements.otp.value,
       targets,
-      note: elements.note.value,
+      note: elements.note.value.trim(),
       startAt: elements.startMode.value === "scheduled" && elements.startAt.value
         ? new Date(elements.startAt.value).toISOString()
         : null,
@@ -231,8 +230,17 @@
   }
 
   function openAdmin() {
-    elements.adminDialog.showModal();
+    elements.workspace.classList.add("hidden");
+    elements.receiptBand.classList.add("hidden");
+    elements.adminPage.classList.remove("hidden");
     elements.masterPassword.focus();
+    loadAdmin();
+  }
+
+  function closeAdminPage() {
+    elements.adminPage.classList.add("hidden");
+    elements.workspace.classList.remove("hidden");
+    if (state.receiptToken) loadReceipt();
   }
 
   async function adminLogin(event) {
@@ -261,6 +269,8 @@
         request("/api/admin/overview"),
         request(`/api/admin/silences?limit=100${status ? `&status=${encodeURIComponent(status)}` : ""}`),
       ]);
+      elements.adminLogin.classList.add("hidden");
+      elements.adminDashboard.classList.remove("hidden");
       renderMetrics(overview);
       renderAdminRows(listing.silences);
       renderRunner(overview.runner, overview.serverTime);
@@ -298,7 +308,7 @@
     if (!rows.length) {
       const row = document.createElement("tr");
       const cell = textCell("No matching silences.");
-      cell.colSpan = 5;
+      cell.colSpan = 6;
       row.append(cell);
       elements.adminRows.append(row);
       return;
@@ -330,6 +340,7 @@
         actions.append(retry);
       }
       row.append(
+        textCell(silence.moderator || silence.note || "—", "moderator-cell"),
         textCell(silence.uid, "uid-cell"),
         nodeCell(statusTag(silence.status)),
         textCell(silence.endAt ? formatDate(silence.endAt) : silence.indefinite ? "Indefinite" : "Pending"),
@@ -452,6 +463,20 @@
     }).format(new Date(Number(timestamp)));
   }
 
+  function startAdminHold(event) {
+    if (event.button !== undefined && event.button !== 0) return;
+    clearTimeout(state.adminHoldTimer);
+    state.adminHoldTimer = setTimeout(() => {
+      state.adminHoldTimer = null;
+      openAdmin();
+    }, 5000);
+  }
+
+  function cancelAdminHold() {
+    clearTimeout(state.adminHoldTimer);
+    state.adminHoldTimer = null;
+  }
+
   elements.addTargets.addEventListener("click", parseUidInput);
   elements.uidInput.addEventListener("keydown", (event) => {
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") parseUidInput();
@@ -482,16 +507,12 @@
   });
   elements.refreshReceipt.addEventListener("click", loadReceipt);
 
-  elements.brandTrigger.addEventListener("click", () => {
-    state.adminOpenClicks += 1;
-    clearTimeout(state.adminClickTimer);
-    state.adminClickTimer = setTimeout(() => { state.adminOpenClicks = 0; }, 1800);
-    if (state.adminOpenClicks >= 5) {
-      state.adminOpenClicks = 0;
-      openAdmin();
-    }
-  });
-  elements.closeAdmin.addEventListener("click", () => elements.adminDialog.close());
+  elements.brandTrigger.addEventListener("pointerdown", startAdminHold);
+  elements.brandTrigger.addEventListener("pointerup", cancelAdminHold);
+  elements.brandTrigger.addEventListener("pointerleave", cancelAdminHold);
+  elements.brandTrigger.addEventListener("pointercancel", cancelAdminHold);
+  elements.brandTrigger.addEventListener("contextmenu", (event) => event.preventDefault());
+  elements.closeAdmin.addEventListener("click", closeAdminPage);
   elements.adminLogin.addEventListener("submit", adminLogin);
   elements.refreshAdmin.addEventListener("click", loadAdmin);
   elements.adminStatusFilter.addEventListener("change", loadAdmin);
